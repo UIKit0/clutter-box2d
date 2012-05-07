@@ -71,6 +71,12 @@ void clutter_box2d_child_set_is_bullet (ClutterBox2D *box2d,
 gboolean clutter_box2d_child_get_is_bullet (ClutterBox2D *box2d,
                                             ClutterActor *child);
 
+void clutter_box2d_child_set_is_fixed_rotation (ClutterBox2D *box2d,
+						ClutterActor *child,
+						gboolean      is_fixed_rotation);
+gboolean clutter_box2d_child_get_is_fixed_rotation (ClutterBox2D *box2d,
+						    ClutterActor *child);
+
 void clutter_box2d_child_set_is_circle (ClutterBox2D *box2d,
                                         ClutterActor *child,
                                         gboolean      is_circle);

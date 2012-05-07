@@ -35,6 +35,7 @@ enum
 {
   PROP_0,
   PROP_IS_BULLET,
+  PROP_IS_FIXED_ROTATION,
   PROP_IS_CIRCLE,
   PROP_OUTLINE,
   PROP_DENSITY,
@@ -70,6 +71,12 @@ static gboolean
 clutter_box2d_child_is_bullet (ClutterBox2DChild *box2d_child)
 {
   return box2d_child->priv->body->IsBullet ();
+}
+
+static gboolean
+clutter_box2d_child_is_fixed_rotation (ClutterBox2DChild *box2d_child)
+{
+  return box2d_child->priv->body->IsFixedRotation ();
 }
 
 static void
@@ -207,6 +214,22 @@ clutter_box2d_child_set_is_bullet_internal (ClutterBox2DChild *box2d_child,
 }
 
 static void
+clutter_box2d_child_set_is_fixed_rotation_internal (ClutterBox2DChild *box2d_child,
+						    gboolean           is_fixed_rotation)
+{
+  ClutterBox2D *box2d = CLUTTER_BOX2D (clutter_child_meta_get_container (
+                                       CLUTTER_CHILD_META (box2d_child)));
+  _clutter_box2d_sync_body (box2d, box2d_child);
+
+  if (!box2d_child->priv->body ||
+      box2d_child->priv->body->IsFixedRotation () == is_fixed_rotation)
+    return;
+
+  box2d_child->priv->body->SetFixedRotation (is_fixed_rotation);
+  g_object_notify (G_OBJECT (box2d_child), "is-fixed-rotation");
+}
+
+static void
 clutter_box2d_child_set_is_circle_internal (ClutterBox2DChild *box2d_child,
                                             gboolean           is_circle)
 {
@@ -298,6 +321,12 @@ clutter_box2d_child_set_property (GObject      *gobject,
       clutter_box2d_child_set_is_bullet_internal (box2d_child,
                                                   g_value_get_boolean (value));
       break;
+
+    case PROP_IS_FIXED_ROTATION:
+      clutter_box2d_child_set_is_fixed_rotation_internal (box2d_child,
+							  g_value_get_boolean (value));
+      break;
+
 
     case PROP_IS_CIRCLE:
       clutter_box2d_child_set_is_circle_internal (box2d_child,
